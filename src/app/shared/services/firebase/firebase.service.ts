@@ -106,7 +106,7 @@ export class FirebaseService {
       //02. Recupero le info extra 
       const userInfo = await FirebaseHelper.getData(
         this.common_service.fbApp!,
-        `users/${uid}/info`,
+        `users/list/${uid}/info`,
         this.common_service.appConfig.firebase.dbUrl || ''
       ) as UserExtras;
 
@@ -137,7 +137,7 @@ export class FirebaseService {
       //02. Recupero i prodotti dell'utente
       const allowedProds = await FirebaseHelper.getData(
         this.common_service.fbApp,
-        `users/${uid}/auth/allowedProds`,
+        `users/list/${uid}/auth/allowedProds`,
         this.common_service.appConfig.firebase.dbUrl || ''
       );
       console.info(`Prodotti recuperati per l'utente ${uid}:`, allowedProds);
@@ -173,7 +173,7 @@ export class FirebaseService {
       const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
       await FirebaseHelper.addOrUpdateProperties(
         this.common_service.fbApp,
-        `users/${uid}/auth/allowedProds`,
+        `users/list/${uid}/auth/allowedProds`,
         { [product.id]: false },
         dbUrl
       );
@@ -200,7 +200,7 @@ export class FirebaseService {
       //02. elimino il prodotto 
       await FirebaseHelper.deleteData(
         this.common_service.fbApp,
-        `users/${uid}/auth/allowedProds/${product.id}`,
+        `users/list/${uid}/auth/allowedProds/${product.id}`,
         dbUrl
       );
       return true;
@@ -270,7 +270,7 @@ export class FirebaseService {
       if (uid) {
         await FirebaseHelper.addOrUpdateProperties(
           this.common_service.fbApp,
-          `users/${uid}/auth/allowedProds`,
+          `users/list/${uid}/auth/allowedProds`,
           { [prodId]: true },
           dbUrl
         );

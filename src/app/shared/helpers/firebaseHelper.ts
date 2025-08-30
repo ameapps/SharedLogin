@@ -94,6 +94,36 @@ export class FirebaseHelper {
   }
 
   /**
+ * Elimina una o più proprietà da un oggetto al path dato
+ */
+  static async deleteProperties(
+    app: FirebaseApp,
+    path: string,
+    propsToDelete: string[] | string,
+    dbUrl?: string
+  ): Promise<void> {
+    try {
+      const db: Database = dbUrl ? getDatabase(app, dbUrl) : getDatabase(app);
+
+      // Se propsToDelete è una stringa singola, lo trasformo in array
+      const props = Array.isArray(propsToDelete) ? propsToDelete : [propsToDelete];
+
+      // Prepara il payload per l'update
+      const updates: Record<string, null> = {};
+      for (const key of props) {
+        updates[`${path}/${key}`] = null;
+      }
+
+      await update(ref(db), updates);
+      console.log(`Eliminate le proprietà [${props.join(", ")}] da "${path}"`);
+    } catch (error) {
+      console.error(`Errore nell'eliminazione di proprietà da "${path}":`, error);
+      throw error;
+    }
+  }
+
+
+  /**
  * Elimina un nodo (oggetto o proprietà) dal path specificato
  */
   static async deleteData(

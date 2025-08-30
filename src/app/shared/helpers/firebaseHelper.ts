@@ -9,6 +9,7 @@ import {
   update,
   Database,
   onValue,
+  remove,
 } from 'firebase/database';
 import { getApps } from 'firebase/app';
 import { UserProduct } from '../models/userProduct.model';
@@ -92,6 +93,23 @@ export class FirebaseHelper {
     }
   }
 
+  /**
+ * Elimina un nodo (oggetto o proprietà) dal path specificato
+ */
+  static async deleteData(
+    app: FirebaseApp,
+    path: string,
+    dbUrl?: string
+  ): Promise<void> {
+    try {
+      const db: Database = dbUrl ? getDatabase(app, dbUrl) : getDatabase(app);
+      await remove(ref(db, path));
+      console.log(`Nodo eliminato con successo da "${path}"`);
+    } catch (error) {
+      console.error(`Errore nell'eliminazione di "${path}":`, error);
+      throw error;
+    }
+  }
 
   /**
    * Aggiunge un elemento a un nodo senza sovrascrivere tutto

@@ -158,6 +158,58 @@ export class FirebaseService {
     }
   }
 
+  /**metodo che imposta a false la property relativa al prodotto per l'utente loggato */
+  async disableUserProduct(product: UserProduct): Promise<boolean> {
+    try {
+      if (!this.common_service.fbApp) {
+        console.error('API Firebase non inizializzata.');
+        return false;
+      }
+      const uid = this.common_service.lastLoggedUser?.uId;
+      if (!uid) {
+        console.error('Utente non trovato.');
+        return false;
+      }
+      const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
+      await FirebaseHelper.addOrUpdateProperties(
+        this.common_service.fbApp,
+        `users/${uid}/auth/allowedProds`,
+        { [product.id]: false },
+        dbUrl
+      );
+      return true;
+    } catch(error) {
+      return false;
+    }
+  }
+
+  /**Metodo che elimina il prodotto da firebase ed anche tutti i suoi riferimenti */
+  async deleteProduct(product: UserProduct): Promise<boolean> {
+    try {
+      //01. controlli 
+      if (!this.common_service.fbApp) {
+        console.error('API Firebase non inizializzata.');
+        return false;
+      }
+      const uid = this.common_service.lastLoggedUser?.uId;
+      if (!uid) {
+        console.error('Utente non trovato.');
+        return false;
+      }
+      const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
+      //02. elimino il prodotto 
+      await FirebaseHelper.deleteData(
+        this.common_service.fbApp,
+        `users/${uid}/auth/allowedProds/${product.id}`,
+        dbUrl
+      );
+      return true;
+    } catch(error) {
+
+      return false;
+    }
+  }
+
   async getUserProducts(uid: string, allowedProds: string[]) {
     try {
       console.info('Recupero prodotti utente...');

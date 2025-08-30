@@ -120,12 +120,14 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-  deleteProduct($event: any, product: UserProduct) {
+  async deleteProduct($event: any, product: UserProduct) {
     $event.stopPropagation();
     if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.name}"?`)) {
-      // Logica per eliminare il prodotto
-      // Esempio: this.fb_service.deleteUserProduct(product);
-      alert('Funzione elimina prodotto non ancora implementata.');
+      let hasDeleted = false;
+      const isDisableAllowed = false; 
+      if (isDisableAllowed) hasDeleted = await this.fb_service.deleteProduct(product);
+      else hasDeleted = await this.fb_service.disableUserProduct(product);
+      if (hasDeleted) alert('Prodotto eliminato.');
     }
   }
 }

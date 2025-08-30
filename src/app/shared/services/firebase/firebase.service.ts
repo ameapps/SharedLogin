@@ -213,6 +213,18 @@ export class FirebaseService {
         { [prodId]: true },
         dbUrl
       );
+      //04. Aggiungo il prodotto ai prodotti abilitati per l'utente
+      const uid = this.common_service.lastLoggedUser?.uId;
+      if (uid) {
+        await FirebaseHelper.addOrUpdateProperties(
+          this.common_service.fbApp,
+          `users/${uid}/auth/allowedProds`,
+          { [prodId]: true },
+          dbUrl
+        );
+      } else {
+        console.warn('Impossibile aggiungere il prodotto ai prodotti abilitati: utente non trovato.');
+      }
       console.info(`Prodotto creato`, selectedProduct);
       return true;
     } catch (error) {

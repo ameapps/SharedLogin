@@ -21,7 +21,7 @@ export class ProductsComponent implements OnInit {
   allTags: string[] = [];
   selectedTags: string[] = [];
   filteredProducts: UserProduct[] = [];
-  hasLoadedProds = false;
+  canShowLoader = false;
 
   constructor(
     public common: CommonService,
@@ -34,22 +34,30 @@ export class ProductsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (!this.app_service.hasAppInitialized) await this.app_service.initApp();
     //01. Recupero quali sono i prodotti a cui l'utente ha accesso
-    this.hasLoadedProds = false; // mostra loader
-    const allowedNames = await this.fb_service.getUserAllowedProducts(
-      this.common.lastLoggedUser?.uId ?? ''
-    );
-    //02. Recupero i suoi prodotti
-    const products = await this.fb_service.getUserProducts(
-      this.common.lastLoggedUser?.uId ?? '',
-      allowedNames ?? []
-    );
-    this.products = Object.values(products || {}) as UserProduct[];
-    //04. Aggiorno i tag e filtro i prodotti
+    this.canShowLoader = false;
+    await this.getUserProduct();
+    //02. Aggiorno i tag e filtro i prodotti
     this.updateTags();
     this.filterProducts();
     this.cdRef.detectChanges();
-    this.hasLoadedProds = true;
+    this.canShowLoader = true;
     console.log('Prodotti utente:', this.products);
+  }
+
+  private async getUserProduct(): Promise<void> {
+    try {
+      const allowedNames = await this.fb_service.getUserAllowedProducts(
+        this.common.lastLoggedUser?.uId ?? ''
+      );
+      //02. Recupero i suoi prodotti
+      const products = await this.fb_service.getUserProducts(
+        this.common.lastLoggedUser?.uId ?? '',
+        allowedNames ?? []
+      );
+      this.products = Object.values(products || {}) as UserProduct[];
+    } catch (error) {
+      console.error('error getting products', error)
+    }
   }
 
   updateTags() {
@@ -105,7 +113,16 @@ export class ProductsComponent implements OnInit {
     const isDisableAllowed = true;
     if (isDisableAllowed) hasDeleted = await this.fb_service.deleteProduct(product);
     else hasDeleted = await this.fb_service.disableUserProduct(product);
-    if (hasDeleted) alert('Prodotto eliminato.');
+    if (hasDeleted) {
+      this.canShowLoader = false;
+      setTimeout(async () => {
+        await this.getUserProduct();
+        this.updateTags();
+        this.filterProducts();
+        this.cdRef.detectChanges();
+        this.canShowLoader = true;
+      }, 100);
+    }
   }
 
   editProfile() {

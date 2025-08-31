@@ -34,13 +34,13 @@ export class ProductsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (!this.app_service.hasAppInitialized) await this.app_service.initApp();
     //01. Recupero quali sono i prodotti a cui l'utente ha accesso
-    this.canShowLoader = false;
+    this.canShowLoader = true;
     await this.getUserProduct();
     //02. Aggiorno i tag e filtro i prodotti
     this.updateTags();
     this.filterProducts();
     this.cdRef.detectChanges();
-    this.canShowLoader = true;
+    this.canShowLoader = false;
     console.log('Prodotti utente:', this.products);
   }
 
@@ -114,13 +114,13 @@ export class ProductsComponent implements OnInit {
     if (isDisableAllowed) hasDeleted = await this.fb_service.deleteProduct(product);
     else hasDeleted = await this.fb_service.disableUserProduct(product);
     if (hasDeleted) {
-      this.canShowLoader = false;
+      this.canShowLoader = true;
       setTimeout(async () => {
         await this.getUserProduct();
         this.updateTags();
         this.filterProducts();
         this.cdRef.detectChanges();
-        this.canShowLoader = true;
+        this.canShowLoader = false;
       }, 100);
     }
   }

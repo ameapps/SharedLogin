@@ -1,8 +1,8 @@
 <div class="container">
   <!-- Loader -->
-  <app-loader *ngIf="!canShowLoader"></app-loader>
+  <app-loader *ngIf="canShowLoader"></app-loader>
   <!-- Lista prodotti -->
-  <div class="products-layout" *ngIf="canShowLoader">
+  <div class="products-layout" *ngIf="!canShowLoader">
     <div class="products-container" [style.width]="filteredProducts.length === 0 ? 'auto' : '100%'">
       <h2 class="products-title">Prodotti disponibili</h2>
       <!-- Filtro tag -->

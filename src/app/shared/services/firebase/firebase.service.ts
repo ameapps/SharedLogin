@@ -178,7 +178,7 @@ export class FirebaseService {
         dbUrl
       );
       return true;
-    } catch(error) {
+    } catch (error) {
       return false;
     }
   }
@@ -197,15 +197,33 @@ export class FirebaseService {
         return false;
       }
       const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
-      //02. elimino il prodotto 
+      //02. elimino il prodotto fisicamente dal db 
       await FirebaseHelper.deleteData(
         this.common_service.fbApp,
         `users/list/${uid}/auth/allowedProds/${product.id}`,
         dbUrl
       );
-      return true;
-    } catch(error) {
+      //03. elimino il riferimento al prodotto da product/all_ids 
+      await FirebaseHelper.deleteProperties(
+        this.common_service.fbApp,
+        `sharedLogin/products/all_ids`,
+        [`${product.id}`],
+        dbUrl
+      );
+      //04. Elimino tutti i riferimenti del prodotto da eachUser/allowedProds 
+      const allUsersId = await this.getAllUsersId();
+      for (const user of allUsersId) {
+        FirebaseHelper.deleteProperties(
+          this.common_service.fbApp!,
+          `users/list/${user}/auth/allowedProds`,
+          [`${product.id}`],
+          dbUrl
+        );
+      }
 
+      return true;
+    } catch (error) {
+      console.error("Errore nell'eliminazione del prodotto:", error);
       return false;
     }
   }
@@ -251,33 +269,40 @@ export class FirebaseService {
       }
       //02. salvataggio prodotto
       const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
-      const prodId = await this.createProductId(selectedProduct);
+      selectedProduct.id = await this.createProductId(selectedProduct);
       await FirebaseHelper.writeUserData(
         selectedProduct,
         this.common_service.fbApp,
-        `sharedLogin/products/list/${prodId}`,
+        `sharedLogin/products/list/${selectedProduct.id}`,
         dbUrl
       );
       //03. salvataggio id prodotto creato 
       await FirebaseHelper.addOrUpdateProperties(
         this.common_service.fbApp,
         `sharedLogin/products/all_ids`,
-        { [prodId]: true },
+        { [selectedProduct.id]: true },
         dbUrl
       );
-      //04. Aggiungo il prodotto ai prodotti abilitati per l'utente
-      const uid = this.common_service.lastLoggedUser?.uId;
-      if (uid) {
-        await FirebaseHelper.addOrUpdateProperties(
-          this.common_service.fbApp,
-          `users/list/${uid}/auth/allowedProds`,
-          { [prodId]: true },
-          dbUrl
-        );
-      } else {
-        console.warn('Impossibile aggiungere il prodotto ai prodotti abilitati: utente non trovato.');
+      //03. aggiungo il riferimento al prodotto da product/all_ids
+      await FirebaseHelper.addOrUpdateProperties(
+        this.common_service.fbApp,
+        `sharedLogin/products/all_ids`,
+        { [selectedProduct.id]: true },
+        dbUrl
+      );
+      //04. aggiungo il riferimento al prodotto ad ogni User/allowedProds
+      const allUsersId = await this.getAllUsersId();
+      for (const user of allUsersId) {
+          const canShowProd = user === this.common_service.lastLoggedUser?.uId;
+          FirebaseHelper.addOrUpdateProperties(
+            this.common_service.fbApp!,
+            `users/list/${user}/auth/allowedProds`,
+            { [selectedProduct.id]: canShowProd },
+            dbUrl
+          );
       }
       console.info(`Prodotto creato`, selectedProduct);
+
       return true;
     } catch (error) {
       console.error("Errore nella creazione del prodotto:", error);
@@ -285,7 +310,7 @@ export class FirebaseService {
     }
   }
 
-  /**Metodo che recupera tutti i prodottidel sito */
+  /**Metodo che recupera tutti i prodotti del sito */
   async getAllProdsId(): Promise<string[]> {
     try {
       if (!this.common_service.fbApp) {
@@ -302,6 +327,27 @@ export class FirebaseService {
       return keys;
     } catch (error) {
       console.error('could not get the list of all the products');
+      return [];
+    }
+  }
+
+  /**Metodo che recupera tutti i prodotti del sito */
+  async getAllUsersId(): Promise<string[]> {
+    try {
+      if (!this.common_service.fbApp) {
+        console.error('API Firebase non inizializzata.');
+        return [];
+      }
+      const allUsers = await FirebaseHelper.getData(
+        this.common_service.fbApp,
+        `users/all_ids`,
+        this.common_service.appConfig.firebase.dbUrl || ''
+      );
+      const keys = Object.keys(allUsers) ?? [];
+
+      return keys;
+    } catch (error) {
+      console.error('could not get the list of all the users');
       return [];
     }
   }

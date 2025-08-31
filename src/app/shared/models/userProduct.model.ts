@@ -1,12 +1,12 @@
 export class UserProduct {
   /**Id del prodotto */
-  id!: string;
+  id = '';
   /**Link al prodotto */
-  link!: string;
+  link = '';
   /**Nome del prodotto */
-  name: string = '';
+  name = '';
   /**Descrizione del prodotto */
-  description: string = '';
+  description = '';
   /**Link all'immagine del prodotto (opzionale) */
   image?: string;
   /**Tags per filtrare i prodotti */

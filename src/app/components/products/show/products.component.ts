@@ -69,7 +69,7 @@ export class ProductsComponent implements OnInit {
 
   filterProducts() {
     if (this.selectedTags.length === 0) {
-      this.filteredProducts = [...this.products];
+      this.filteredProducts = this.products.map(p => ({ ...p }));
     } else {
       this.filteredProducts = this.products.filter((p) =>
         p.tags?.some((t) => this.selectedTags.includes(t))
@@ -91,6 +91,23 @@ export class ProductsComponent implements OnInit {
     this.router.navigate(['/products/add']);
   }
 
+  editProduct($event: any, product: UserProduct) {
+    $event.stopPropagation();
+    this.common.selectedProduct = { ...product };
+    this.router.navigate(['/products/edit']);
+  }
+
+  async deleteProduct($event: any, product: UserProduct) {
+    $event.stopPropagation();
+    const hasAccepted = confirm(`Sei sicuro di voler eliminare il prodotto "${product.name}"?`);
+    if (!hasAccepted) return;
+    let hasDeleted = false;
+    const isDisableAllowed = true;
+    if (isDisableAllowed) hasDeleted = await this.fb_service.deleteProduct(product);
+    else hasDeleted = await this.fb_service.disableUserProduct(product);
+    if (hasDeleted) alert('Prodotto eliminato.');
+  }
+
   editProfile() {
     this.router.navigate(['/user/edit']);
   }
@@ -106,28 +123,11 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-  editProduct($event: any, product: UserProduct) {
-    $event.stopPropagation();
-    this.common.selectedProduct = { ...product };
-    this.router.navigate(['/products/edit']);
-  }
-
   logout() {
     if (confirm('Sei sicuro di voler effettuare il logout?')) {
       this.common.lastLoggedUser = undefined;
       localStorage.removeItem('lastLoggedUser');
       this.router.navigate(['/']);
-    }
-  }
-
-  async deleteProduct($event: any, product: UserProduct) {
-    $event.stopPropagation();
-    if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.name}"?`)) {
-      let hasDeleted = false;
-      const isDisableAllowed = false; 
-      if (isDisableAllowed) hasDeleted = await this.fb_service.deleteProduct(product);
-      else hasDeleted = await this.fb_service.disableUserProduct(product);
-      if (hasDeleted) alert('Prodotto eliminato.');
     }
   }
 }

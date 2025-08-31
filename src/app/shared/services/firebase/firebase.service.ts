@@ -200,7 +200,7 @@ export class FirebaseService {
       //02. elimino il prodotto fisicamente dal db 
       await FirebaseHelper.deleteData(
         this.common_service.fbApp,
-        `users/list/${uid}/auth/allowedProds/${product.id}`,
+        `sharedLogin/products/list/${product.id}`,
         dbUrl
       );
       //03. elimino il riferimento al prodotto da product/all_ids 

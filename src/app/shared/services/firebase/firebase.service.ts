@@ -450,6 +450,7 @@ export class FirebaseService {
         return;
       }
       const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
+      //01. Aggiorno le informazioni dell'utente
       const userInfo: FirebaseUserInfo = {
         icon: user.icon,
         sex: user.sex ?? 'male',
@@ -461,12 +462,14 @@ export class FirebaseService {
         userInfo,
         dbUrl
       );
-
+      //02. Se è stata cambiata la mail, aggiorno anche quella
+      const hasEmailChanged = true; //TODO: implementare controllo\
+      if (hasEmailChanged) await FirebaseHelper.changeCurrentUserEmail(user.email); //TODO: finire
       console.info(`Utente modificato`, user);
     } catch (error) {
       console.error('Errore nella modifica dell\'utente:', error);
     }
-  }
+  }\
 
 
   // #REGION USERS

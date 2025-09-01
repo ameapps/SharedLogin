@@ -13,7 +13,7 @@ import {
 } from 'firebase/database';
 import { getApps } from 'firebase/app';
 import { UserProduct } from '../models/userProduct.model';
-import { createUserWithEmailAndPassword, getAuth, UserCredential } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, updateEmail, UserCredential } from 'firebase/auth';
 
 export class FirebaseHelper {
   private static apps: Map<string, FirebaseApp> = new Map();
@@ -199,6 +199,21 @@ export class FirebaseHelper {
       return createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Errore nella creazione dell'utente Firebase:", error);
+      throw error;
+    }
+  }
+
+    static async changeCurrentUserEmail(newEmail: string): Promise<void> {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Nessun utente attualmente loggato");
+      }
+      await updateEmail(user, newEmail);
+      console.log("Email aggiornata con successo!");
+    } catch (error) {
+      console.error("Errore nell'aggiornamento dell'email:", error);
       throw error;
     }
   }

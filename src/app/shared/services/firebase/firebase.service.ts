@@ -22,6 +22,7 @@ import { FirebaseUser, FirebaseUserAuth, FirebaseUserInfo } from '../../models/f
   providedIn: 'root',
 })
 export class FirebaseService {
+
   constructor(
     private common_service: CommonService,
     private assets_service: AssetsService
@@ -439,5 +440,34 @@ export class FirebaseService {
       dbUrl
     );
   }
+
+  
+  /** Modifica le informazioni dell'utente. */
+  async editUser(user: User) {
+    try {
+      if (!this.common_service.fbApp) {
+        console.error('API Firebase non inizializzata.');
+        return;
+      }
+      const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
+      const userInfo: FirebaseUserInfo = {
+        icon: user.icon,
+        sex: user.sex ?? 'male',
+        username: user.username
+      };
+      await FirebaseHelper.addOrUpdateProperties(
+        this.common_service.fbApp,
+        `users/list/${user.uId}/info`,
+        userInfo,
+        dbUrl
+      );
+
+      console.info(`Utente modificato`, user);
+    } catch (error) {
+      console.error('Errore nella modifica dell\'utente:', error);
+    }
+  }
+
+
   // #REGION USERS
 }

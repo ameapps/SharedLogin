@@ -35,14 +35,15 @@ export class CrudUserComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  async onSubmit() {
     // Salvataggio o aggiornamento dell'utente
     if (this.pageTitle === 'Aggiungi nuovo utente') {
+      await this.firebase_service.addUser(this.user);
       console.log('Nuovo utente:', this.user);
-      this.firebase_service.addUser(this.user);
     } else {
       // Logica per modifica utente
       this.common.lastLoggedUser = { ...this.user };
+      await this.firebase_service.editUser(this.user);
       this.common.saveUserSession();
       console.log('Utente modificato:', this.user);
     }

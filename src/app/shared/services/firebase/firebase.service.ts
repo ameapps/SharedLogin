@@ -469,7 +469,7 @@ export class FirebaseService {
     } catch (error) {
       console.error('Errore nella modifica dell\'utente:', error);
     }
-  }\
+  }
 
 
   // #REGION USERS

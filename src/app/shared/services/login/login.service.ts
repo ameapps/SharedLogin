@@ -15,7 +15,8 @@ export class LoginService {
     password: '',
     uId: '',
     sex: 'male',
-    icon: ''
+    icon: '',
+    role: 'user'
   };
   error = '';
   showPassword = false;

@@ -5,4 +5,5 @@ export class User {
   uId = '';
   sex?: 'male' | 'female' = 'male'
   icon = '';
+  role: 'user' | 'supervisor' | 'admin' = 'user';
 }

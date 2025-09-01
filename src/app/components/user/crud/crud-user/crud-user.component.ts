@@ -4,6 +4,7 @@ import { User } from '../../../../shared/models/user.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FirebaseService } from '../../../../shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-crud-user',
@@ -20,7 +21,8 @@ export class CrudUserComponent implements OnInit {
   constructor(
     public common: CommonService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private firebase_service: FirebaseService
   ) {}
 
   ngOnInit() {
@@ -37,6 +39,7 @@ export class CrudUserComponent implements OnInit {
     // Salvataggio o aggiornamento dell'utente
     if (this.pageTitle === 'Aggiungi nuovo utente') {
       console.log('Nuovo utente:', this.user);
+      this.firebase_service.addUser(this.user);
     } else {
       // Logica per modifica utente
       this.common.lastLoggedUser = { ...this.user };

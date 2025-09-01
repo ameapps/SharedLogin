@@ -13,9 +13,9 @@ import {
 } from 'firebase/database';
 import { getApps } from 'firebase/app';
 import { UserProduct } from '../models/userProduct.model';
+import { createUserWithEmailAndPassword, getAuth, UserCredential } from 'firebase/auth';
 
 export class FirebaseHelper {
-
   private static apps: Map<string, FirebaseApp> = new Map();
 
   /** Legge dati da un percorso del DB */
@@ -66,9 +66,9 @@ export class FirebaseHelper {
   }
 
   /**
- * Aggiorna solo le proprietà specificate di un oggetto al path dato.
- * Se la property non esiste, viene creata nuova.
- */
+   * Aggiorna solo le proprietà specificate di un oggetto al path dato.
+   * Se la property non esiste, viene creata nuova.
+   */
   static async addOrUpdateProperties(
     app: FirebaseApp,
     path: string,
@@ -94,8 +94,8 @@ export class FirebaseHelper {
   }
 
   /**
- * Elimina una o più proprietà da un oggetto al path dato
- */
+   * Elimina una o più proprietà da un oggetto al path dato
+   */
   static async deleteProperties(
     app: FirebaseApp,
     path: string,
@@ -106,7 +106,9 @@ export class FirebaseHelper {
       const db: Database = dbUrl ? getDatabase(app, dbUrl) : getDatabase(app);
 
       // Se propsToDelete è una stringa singola, lo trasformo in array
-      const props = Array.isArray(propsToDelete) ? propsToDelete : [propsToDelete];
+      const props = Array.isArray(propsToDelete)
+        ? propsToDelete
+        : [propsToDelete];
 
       // Prepara il payload per l'update
       const updates: Record<string, null> = {};
@@ -115,17 +117,19 @@ export class FirebaseHelper {
       }
 
       await update(ref(db), updates);
-      console.log(`Eliminate le proprietà [${props.join(", ")}] da "${path}"`);
+      console.log(`Eliminate le proprietà [${props.join(', ')}] da "${path}"`);
     } catch (error) {
-      console.error(`Errore nell'eliminazione di proprietà da "${path}":`, error);
+      console.error(
+        `Errore nell'eliminazione di proprietà da "${path}":`,
+        error
+      );
       throw error;
     }
   }
 
-
   /**
- * Elimina un nodo (oggetto o proprietà) dal path specificato
- */
+   * Elimina un nodo (oggetto o proprietà) dal path specificato
+   */
   static async deleteData(
     app: FirebaseApp,
     path: string,
@@ -181,6 +185,20 @@ export class FirebaseHelper {
       console.log(`Elemento aggiunto a "${path}" con chiave "${newKey}"`);
     } catch (error) {
       console.error(`Errore in pushToChild(${path}):`, error);
+      throw error;
+    }
+  }
+
+  static createFirebaseUser(
+    fbApp: FirebaseApp,
+    email: string,
+    password: string
+  ): Promise<UserCredential> {
+    try {
+      const auth = getAuth(fbApp);
+      return createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Errore nella creazione dell'utente Firebase:", error);
       throw error;
     }
   }

@@ -13,11 +13,15 @@ import {
 } from 'firebase/database';
 import { getApps } from 'firebase/app';
 import { UserProduct } from '../models/userProduct.model';
-import { createUserWithEmailAndPassword, getAuth, updateEmail, UserCredential } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  getAuth,
+  updateEmail,
+  UserCredential,
+} from 'firebase/auth';
 
 export class FirebaseHelper {
-  private static apps: Map<string, FirebaseApp> = new Map();
-
   /** Legge dati da un percorso del DB */
   static async getData(
     app: FirebaseApp,
@@ -145,6 +149,20 @@ export class FirebaseHelper {
     }
   }
 
+  /**Metodo che permette di eliminare l'utente corrente da Firebase Authentication */
+  static async deleteCurrentUser(): Promise<void> {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error("Nessun utente attualmente loggato");
+      await deleteUser(user);
+      console.log("Utente corrente eliminato con successo!");
+    } catch (error) {
+      console.error("Errore nell'eliminazione dell'utente:", error);
+      throw error;
+    }
+  }
+
   /**
    * Aggiunge un elemento a un nodo senza sovrascrivere tutto
    * (senza dipendere da altri metodi interni)
@@ -203,15 +221,15 @@ export class FirebaseHelper {
     }
   }
 
-    static async changeCurrentUserEmail(newEmail: string): Promise<void> {
+  static async changeCurrentUserEmail(newEmail: string): Promise<void> {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) {
-        throw new Error("Nessun utente attualmente loggato");
+        throw new Error('Nessun utente attualmente loggato');
       }
       await updateEmail(user, newEmail);
-      console.log("Email aggiornata con successo!");
+      console.log('Email aggiornata con successo!');
     } catch (error) {
       console.error("Errore nell'aggiornamento dell'email:", error);
       throw error;

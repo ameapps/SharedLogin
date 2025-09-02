@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { FirebaseService } from '../../../shared/services/firebase/firebase.service';
 import { AppService } from '../../../shared/services/app/app.service';
 import { LoaderComponent } from '../../../shared/components/loader/loader.component';
+import { FirebaseHelper } from '../../../shared/helpers/firebaseHelper';
 
 @Component({
   selector: 'app-products',
@@ -133,10 +134,19 @@ export class ProductsComponent implements OnInit {
     this.router.navigate(['/user/add']);
   }
 
-  deleteProfile() {
+  async deleteProfile() {
     // Logica per eliminazione profilo (es. conferma)
     if (confirm('Sei sicuro di voler eliminare il profilo?')) {
-      alert('Funzione elimina profilo non ancora implementata.');
+      if (this.common.lastLoggedUser == null) {
+        console.error('Nessun utente loggato');
+        return;
+      }
+      const hasDeleted = await this.fb_service.deleteUser(this.common.lastLoggedUser);
+      if (hasDeleted) {
+        this.common.lastLoggedUser = undefined;
+        localStorage.removeItem('lastLoggedUser');
+        this.router.navigate(['/']);
+      }
     }
   }
 

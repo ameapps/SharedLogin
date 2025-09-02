@@ -22,7 +22,6 @@ import { FirebaseUser, FirebaseUserAuth, FirebaseUserInfo } from '../../models/f
   providedIn: 'root',
 })
 export class FirebaseService {
-
   constructor(
     private common_service: CommonService,
     private assets_service: AssetsService
@@ -441,7 +440,6 @@ export class FirebaseService {
     );
   }
 
-  
   /** Modifica le informazioni dell'utente. */
   async editUser(user: User) {
     try {
@@ -471,6 +469,27 @@ export class FirebaseService {
     }
   }
 
+  async deleteUser(user: User): Promise<boolean> {
+    try {
+      if (!this.common_service.fbApp) {
+        console.error('API Firebase non inizializzata.');
+        return false;
+      }
+      const dbUrl = this.common_service.appConfig.firebase.dbUrl || '';
+      await FirebaseHelper.deleteProperties(
+        this.common_service.fbApp,
+        `users/all_ids`,
+        [user.uId],
+        dbUrl
+      );
+      await FirebaseHelper.deleteCurrentUser();
+      console.info(`Utente eliminato`, user);
+      return true;
+    } catch (error) {
+      console.error('Errore nella eliminazione dell\'utente:', error);
+      return false;
+    }
+  }
 
   // #REGION USERS
 }

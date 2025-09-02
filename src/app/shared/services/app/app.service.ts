@@ -24,7 +24,7 @@ export class AppService {
     try {
       await this.getFirebaseInit();
       this.common.lastLoggedUser = this.common.getUserSession();
-      this.common.appConfig = await this.loadAppConfig();
+      this.common.appConfig = await this.common.loadAppConfig();
       const loginResult = await this.fb_service.tryLogin(this.common.lastLoggedUser);
       if (!loginResult) {
         console.error('Login fallito.');
@@ -55,12 +55,5 @@ export class AppService {
     } catch (error) {
       console.error('Errore durante l\'inizializzazione di Firebase:', error);
     }
-  }
-
-  async loadAppConfig(): Promise<DefaultConfig> {
-    const value = await lastValueFrom(
-      this.http_service.get<DefaultConfig>('assets/config/default-config.json')
-    );
-    return value;
   }
 }

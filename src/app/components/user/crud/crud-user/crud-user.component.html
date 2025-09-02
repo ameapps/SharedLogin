@@ -24,16 +24,21 @@
           required
         />
       </div>
-      <div class="input-group" *ngIf="pageTitle === 'Aggiungi nuovo utente'">
+      <div class="input-group password-group" *ngIf="pageTitle === 'Aggiungi nuovo utente'">
         <label for="password">Password</label>
         <input
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           id="password"
           name="password"
           [(ngModel)]="user.password"
-          placeholder="Password"
+          placeholder="Inserisci la password"
           required
+          style="padding-right: 2.5rem;"
         />
+        <button type="button" class="hide" (click)="togglePasswordVisibility()" tabindex="-1">
+          <span *ngIf="!showPassword" aria-label="Mostra password" title="Mostra password">👁️</span>
+          <span *ngIf="showPassword" aria-label="Nascondi password" title="Nascondi password">🙈</span>
+        </button>
       </div>
       <div class="input-group">
         <label for="sex">Sesso</label>

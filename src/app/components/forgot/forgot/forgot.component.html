@@ -1,0 +1,13 @@
+<div class="forgot-container">
+  <div class="forgot-card">
+    <h2>Recupera la password</h2>
+    <form>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Inserisci la tua email" required />
+      </div>
+      <button type="submit" (click)="sendResetLink()">Invia richiesta</button>
+    </form>
+    <div class="info-message">Riceverai una mail con le istruzioni per il reset.</div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+{
+  "users": {
+    "ame.dev.apps" : {
+      "apiKey": "AIzaSyCBWykMLPP5sM73T9DSXLEhpDXukg1nOAA",
+      "authDomain": "amedevapps-47624.firebaseapp.com",
+      "projectId": "amedevapps-47624",
+      "storageBucket": "amedevapps-47624.firebasestorage.app",
+      "messagingSenderId": "304076044506",
+      "appId": "1:304076044506:web:643081943b2786f95f8de3",
+      "measurementId": "G-33ZMQKDGWY"
+    }
+  }
+}

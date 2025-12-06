@@ -1,0 +1,13 @@
+{
+  "login": {},
+  "products": {
+    "show": {
+      "open_mode": "uId_in_querystring"
+    },
+    "add": {},
+    "edit": {}
+  },
+  "firebase": {
+    "dbUrl" : "https://amedevapps-47624-default-rtdb.europe-west1.firebasedatabase.app"
+  }
+}

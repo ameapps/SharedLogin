@@ -1,0 +1,71 @@
+<div class="container">
+  <!-- Loader -->
+  <app-loader *ngIf="canShowLoader"></app-loader>
+  <!-- Lista prodotti -->
+  <div class="products-layout" *ngIf="!canShowLoader">
+    <div class="products-container" [style.width]="filteredProducts.length === 0 ? 'auto' : '100%'">
+      <h2 class="products-title">Prodotti disponibili</h2>
+      <!-- Filtro tag -->
+      <div class="tag-filter">
+        <span class="filter-label">Filtra per tag:</span>
+        <ng-container *ngFor="let tag of allTags">
+          <button type="button" class="tag-chip" [class.selected]="selectedTags.includes(tag)" (click)="toggleTag(tag)">
+            {{ tag }}
+          </button>
+        </ng-container>
+      </div>
+      <div class="products-grid">
+        <mat-card class="product-card add-card" (click)="addProduct()">
+          <div
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 180px;">
+            <span style="font-size: 3rem; color: var(--primary);">+</span>
+            <mat-card-content>
+              <h3 style="text-align: center; color: var(--primary-dark);">Aggiungi nuovo prodotto</h3>
+            </mat-card-content>
+          </div>
+        </mat-card>
+        <!-- Visualizzazione dei prodotti -->
+        <mat-card *ngFor="let product of filteredProducts" class="product-card" (click)="openProductLink(product)">
+          <img mat-card-image [src]="product.image" [alt]="product.name" />
+          <mat-card-content>
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <div class="products">
+              <div class="product-tags">
+                <span *ngFor="let tag of product.tags" class="tag-chip">{{ tag }}</span>
+              </div>
+              <div class="crud-container">
+
+                <button title="Edit product" class="product-crud profile-btn" (click)="editProduct($event, product)">
+                  Edit
+                </button>
+                <button title="Delete product" class="product-crud profile-btn delete"
+                  (click)="deleteProduct($event, product)" style="margin-left: 0.5rem;">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <!-- Info utenti -->
+  <div class="profile-menu-container">
+    <div class="profile-menu" [style.width]="filteredProducts.length === 0 ? 'auto' : '100%'"
+      [style.left]="filteredProducts.length === 0 ? '0.25em' : '1em'">
+      <div class="profile-pic">
+        <img [src]="'assets/images/users/' + common.lastLoggedUser?.icon + '.svg'" alt="Foto profilo" />
+      </div>
+      <div class="profile-name">{{ common.lastLoggedUser?.username || 'Utente' }}</div>
+      <div class="row">
+        <button title="Edit profile" class="profile-btn" (click)="editProfile()">Edit</button>
+        <button title="Delete profile" class="profile-btn delete" (click)="deleteProfile()">Delete</button>
+        <button title="Add profile" class="profile-btn" (click)="addProfile()">Add</button>
+      </div>
+      <div class="row">
+        <button title="Logout" class="profile-btn warning" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<div class="add-product-container" *ngIf="common.selectedProduct">
+  <div class="add-product-card">
+    <h2>{{ pageTitle }}</h2>
+    <form (ngSubmit)="onSubmit()" #addProductForm="ngForm">
+      <!-- Product name -->
+      <div class="input-group">
+        <label for="name">Nome prodotto</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          [(ngModel)]="common.selectedProduct.name"
+          placeholder="Nome prodotto"
+          required
+        />
+      </div>
+      <!-- Description -->
+      <div class="input-group">
+        <label for="description">Descrizione</label>
+        <input
+          type="text"
+          id="description"
+          name="description"
+          [(ngModel)]="common.selectedProduct.description"
+          placeholder="Descrizione"
+          required
+        />
+      </div>
+      <!-- Image URL -->
+      <div class="input-group">
+        <label for="image">Immagine (URL)</label>
+        <input
+          type="url"
+          id="image"
+          name="image"
+          [(ngModel)]="common.selectedProduct.image"
+          placeholder="URL immagine"
+        />
+      </div>
+      <!-- Aggiungi tag manuale -->
+      <div class="input-group">
+        <label for="customTag">Aggiungi tag</label>
+        <div style="display: flex; gap: 0.5rem">
+          <input
+            type="text"
+            id="customTag"
+            [(ngModel)]="customTag"
+            name="customTag"
+            placeholder="Scrivi un tag"
+          />
+          <button type="button" (click)="addCustomTag()">Aggiungi</button>
+        </div>
+      </div>
+      <!-- Tag selezionati -->
+      <div class="input-group" *ngIf="selectedTags.length">
+        <label>Tag selezionati</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+          <span
+            *ngFor="let tag of selectedTags"
+            style="
+              background: #e0e7ef;
+              border-radius: 12px;
+              padding: 0.3rem 0.8rem;
+              display: flex;
+              align-items: center;
+            "
+          >
+            {{ tag }}
+            <button
+              type="button"
+              (click)="removeTag(tag)"
+              style="
+                margin-left: 0.5rem;
+                background: none;
+                border: none;
+                color: #c00;
+                cursor: pointer;
+                font-size: 1rem;
+              "
+            >
+              &times;
+            </button>
+          </span>
+        </div>
+      </div>
+      <button type="submit">{{ isEdit ? 'Modifica prodotto' : 'Aggiungi prodotto' }}</button>
+    </form>
+    <div *ngIf="success" class="success-message">
+      Prodotto aggiunto con successo!
+    </div>
+  </div>
+</div>

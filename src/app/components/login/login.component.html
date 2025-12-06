@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="login-card">
+    <h2>Accedi</h2>
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input
+          type="text"
+          id="email"
+          name="email"
+          [(ngModel)]="login_service.user.email"
+          placeholder="Inserisci l'email"
+          required
+        />
+      </div>
+      <div class="input-group" style="position: relative">
+        <label for="password">Password</label>
+        <input
+          [type]="login_service.showPassword ? 'text' : 'password'"
+          id="password"
+          name="password"
+          [(ngModel)]="login_service.user.password"
+          placeholder="Inserisci la password"
+          required
+          style="padding-right: 2.5rem"
+        />
+        <button type="button" class="hide" (click)="togglePasswordVisibility()">
+          <span
+            *ngIf="!login_service.showPassword"
+            aria-label="Mostra password"
+            title="Mostra password"
+            >👁️</span
+          >
+          <span
+            *ngIf="login_service.showPassword"
+            aria-label="Nascondi password"
+            title="Nascondi password"
+            >🙈</span
+          >
+        </button>
+      </div>
+      <button type="submit">Login</button>
+      <div *ngIf="login_service.error" class="error-message">{{ login_service.error }}</div>
+    </form>
+    <div class="forgot-password">
+      <span (click)="forgotPassword()">Hai dimenticato la password?</span>
+    </div>
+    <div class="register-user">
+      <button type="button" (click)="register()">Registrati</button>
+    </div>
+  </div>
+</div>
